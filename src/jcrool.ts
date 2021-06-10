@@ -48,40 +48,29 @@
  * jcrool(anyObjectorArray, [{keyList: ['a', 'b', 'c'], bullseye: true}]);
  * what this does is it will find all instances of a, b and c
  */
+import { evaluateWorkObject } from './lib/utils/evaluateWorkObject';
+import { parseOptions, workUnit } from './lib/utils/parseOptions';
 export type Natives = 'undefined' | 'string' | 'boolean' | 'number';
 export type TNative = undefined | string | boolean | number;
 export type AnyObject = Record<string, any>;
 export type AnyObjectOrArray = AnyObject | any[];
-export interface Konfig {
-  keyList: string[];
-  types: Natives[];
-  key?: string;
-  force?: boolean; //false
-  bullseye?: boolean; //false
-  alias?: string | string[];
-  structure?: AnyObject;
+
+export interface Konfig extends workUnit {
+  struct?: boolean;
+  twins?: boolean;
+  bullseye?: boolean;
 }
-import { parseOptions } from './lib/parseOptions';
 const { isArray } = Array;
 export function jcrool(obj: AnyObjectOrArray, keysListConfig: Konfig[]) {
-  let pageAssets: any[] = []; // cached final result items
+  let results: any[] = []; // cached final result items
   const workObject = parseOptions(keysListConfig);
-  //  (keysListConfig);
-  // got to look at an object maybe once or twice or more depending on the input
-  //  (workObject);
-  if (!isArray(obj)) {
-    const allResults = workObject.functionsToRun.map((cb: any) => {
-      const res = cb(obj, keysListConfig);
-      const foundKeys = Object.keys(res);
-    });
-    // const bingoObject = produceBingoObject(obj, keysListConfig);
-    if (allResults) {
-      allResults.forEach((result) => {
-        if (result) pageAssets.push(allResults);
-      });
+  const isTopLevelArray = isArray(obj);
+  if (!isTopLevelArray) {
+    const result = evaluateWorkObject(obj, workObject);
+    if (!result.failed) {
+      results.push(result);
     }
   }
-  // No Bingo, We will skip to the next One
 
   const recurse = (obj: any) => {
     if (obj) {
@@ -99,26 +88,15 @@ export function jcrool(obj: AnyObjectOrArray, keysListConfig: Konfig[]) {
           // value is object array, just re run the recursion since we wont have what we want in an array
           recurse(value);
         } else if (typeof value === 'object') {
-          // inside an object object we might find what we want.
-          // if (value) {
-          //   const bingoObject = produceBingoObject(value, keysListConfig);
-          //   if (bingoObject) {
-          //     pageAssets.push(bingoObject);
-          //   }
-          // }
-          const allResults = workObject.functionsToRun.map((cb: any) =>
-            cb(value, keysListConfig)
-          );
-          allResults.forEach((result) => {
-            if (result) pageAssets.push(result);
-          });
-          //  ('ELLLO');
-          //  (allResults);
+          const result = evaluateWorkObject(value!, workObject);
+          if (result.failed !== true) {
+            results.push(result);
+          }
           recurse(value);
         }
       }
     }
   };
   recurse(obj);
-  return pageAssets;
+  return results;
 }

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --no-cache --verbose --watch-all > test.log"
+    "test": "jest /src/ --no-cache --verbose > test.log"
   },
   "keywords": [],
   "author": "",

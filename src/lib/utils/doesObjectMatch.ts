@@ -1,13 +1,16 @@
 import { matchKeyAndType } from './matchKeyAndType';
-import { AnyObject, Konfig } from '../../jcrool';
-export function doesObjectMatch(anyObject: AnyObject, keys: Konfig[]) {
+import { AnyObject } from '../../jcrool';
+import { workUnitMap } from './parseOptions';
+export function doesObjectMatch(anyObject: AnyObject, unitMap: workUnitMap) {
   if (anyObject) {
-    const mappedKeys = keys.map((k) => {
-      return matchKeyAndType(anyObject, k);
-    });
-    // 'MappedKeys:', mappedKeys;
-    // console.log(mappedKeys);
-    return !mappedKeys.includes('') && new Set(mappedKeys); // this line IS TWIN MATCH
+    for (let [key, types] of unitMap.entries()) {
+      const result = matchKeyAndType(anyObject, key, types);
+      if (result === '') {
+        //failed to match.
+        return false;
+      }
+    }
+    // return new Map(mappedKeys); // this line IS TWIN MATCH
   }
   return false;
 }

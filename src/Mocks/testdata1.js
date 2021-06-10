@@ -1,9 +1,11 @@
 // try changing the type of the keys
 const foo = '42';
+const fooKey = 'foo';
 const bar = 'hello';
+const barKey = 'bar';
 const targetObject = { foo, bar, a: 42, b: '42' };
 // count them manually to verify the tests are saying the truth.
-const SHALLOW_ARRAY_COUNT = 7;
+const SHALLOW_ARRAY_COUNT = 7; //** Manual Count
 const shallowArray = [
   [[], [], [[], [], [targetObject], [], [], [targetObject]], [], [], []],
   [[], [], [[], [], [], [], [], []], [], [], []],
@@ -558,8 +560,8 @@ const shallowArray = [
   [],
   [],
 ];
-// current count 5
-const DEEP_OBJECT_COUNT = 5;
+
+const DEEP_OBJECT_COUNT = 5; //** Manual Count
 const deepObject = {
   a: {
     a: {},
@@ -849,7 +851,7 @@ const deepObject = {
   // mario: {},
 };
 
-// current count 402 hits
+const COMBINATION_COUNT = 402; //** Manual Count
 const combination = {
   a: shallowArray,
   b: deepObject,
@@ -872,9 +874,12 @@ const combination = {
 module.exports = {
   shallowArray,
   deepObject,
+  fooKey,
   foo,
+  barKey,
   bar,
   combination,
   SHALLOW_ARRAY_COUNT,
   DEEP_OBJECT_COUNT,
+  COMBINATION_COUNT,
 };

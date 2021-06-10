@@ -1,6 +1,6 @@
 // import { twinMatch } from './twinMatch/twinMatch';
 // import { bullseye } from './bullseye/bullseye';
-import { AnyObject, Konfig } from '../jcrool';
+import { AnyObject, Konfig } from '../../jcrool';
 
 export function produceBingoObject(
   anyObject: AnyObject,
