@@ -1,7 +1,7 @@
 {
-  "name": "TestingMyRecursion",
+  "name": "Jcrool",
   "version": "1.0.0",
-  "description": "",
+  "description": "recursively travel deep object or array strcutures to find specific key value pairs",
   "main": "index.js",
   "scripts": {
     "test": "jest /src/ --no-cache --verbose > test.log"
@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+
+  },
+  "devDependencies": {
     "@types/jest": "^26.0.22",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
