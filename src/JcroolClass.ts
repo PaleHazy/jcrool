@@ -14,6 +14,19 @@ export interface Konfig {
   structure?: AnyObject;
 }
 
+export type workUnitMap = Map<string, Natives[]>;
+
+export type KeyList = string[];
+export interface workUnit {
+  keys: KeyList;
+  types: Natives[][];
+}
+
+export interface IWorkObject {
+  struct: any;
+  twins: workUnitMap[];
+  bullseye: workUnitMap;
+}
 export default class Jcrool {
   _topLevelObj: AnyObjectOrArray;
   _currentObj!: AnyObject;
@@ -61,5 +74,101 @@ export default class Jcrool {
         this.recurse();
       }
     }
+  }
+  produceBingoObject(
+    anyObject: AnyObject,
+    keys: Konfig[],
+    cb: any
+  ) {
+    // list of the keys that are in the object that match the config
+    // const keyListArray = keys.map((k) => findKeyInObjectAndReturnIt(o, k));
+    // if()
+    return cb(anyObject, keys); // matches pairs(or more) of keys found together
+  
+    //return false; // match failed
+  }
+  evaluateWorkObject(anyObj: AnyObject, workObj: IWorkObject) {
+    const finalObj: any = {};
+    for (let [key, value] of Object.entries(workObj)) {
+      if (key === 'twins') {
+        // run twins eval code, mutates finalObj
+        value.forEach((value: workUnitMap) => {
+          this.twinMatch(anyObj, value, finalObj);
+        });
+      }
+  
+      //runs after on purpose will overwrite found keys of same name
+      // if (key === 'bullseye') {
+      //   //runs bullseye finding code
+      //   bullseye(anyObj, value, finalObj);
+      // }
+    }
+    return finalObj;
+  }
+
+  twinMatch(
+    anyObj: AnyObject,
+    unitMap: workUnitMap,
+    finalObj: any
+  ): void {
+    let match = '';
+    const keys: string[] = [];
+    unitMap.forEach((v, k) => {
+      match = this.matchKeyAndType(anyObj, k, v);
+      keys.push(match);
+    });
+    if (keys.includes('') === false) {
+      // this is the twin match, aka they all have to match or nothing
+      for (let key of keys) {
+        Reflect.defineProperty(finalObj, key, {
+          value: anyObj[key],
+          enumerable: true,
+          configurable: true,
+          writable: true,
+        });
+      }
+    } else {
+      finalObj.failed = true;
+    }
+  }
+
+  bullseye(
+    anyObj: AnyObject,
+    unitMap: workUnitMap,
+    finalObj: any
+  ) {
+    unitMap.forEach((v, k) => {
+      let match = this.matchKeyAndType(anyObj, k, v);
+      if (match) {
+        Object.defineProperty(finalObj, match, {
+          value: anyObj[match],
+          enumerable: true,
+          configurable: true,
+          writable: true,
+        });
+      }
+    });
+    if (Object.keys(finalObj).length === 0) {
+      finalObj.failed = true;
+    }
+  }
+
+  matchKeyAndType(
+    object: AnyObject,
+    key: string,
+    types: Natives[]
+  ) {
+    //is the key present? and of one of the types. return the key;
+    const keyPresent: boolean = key in object;
+    if (keyPresent) {
+      if (this.isTypeOf(object[key], types)) {
+        return key;
+      }
+    }
+    return ''; // is falsy
+  }
+
+  isTypeOf(value: any, types: Natives[]) {
+    return types.some((type) => typeof value === type);
   }
 }

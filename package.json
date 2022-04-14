@@ -1,5 +1,5 @@
 {
-  "name": "Jcrool",
+  "name": "jcrool",
   "version": "1.0.0",
   "description": "recursively travel deep object or array strcutures to find specific key value pairs",
   "main": "index.js",
