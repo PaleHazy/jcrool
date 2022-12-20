@@ -1,16 +1,22 @@
 {
-  "name": "jcrool",
-  "version": "1.0.0",
+  "name": "@palehazy/jcrool",
+  "version": "2.0.0",
   "description": "recursively travel deep object or array strcutures to find specific key value pairs",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "jest /src/ --no-cache --verbose > test.log"
+    "test": "jest /src/ --no-cache --verbose",
+    "build": "tsc --project tsconfig.build.json",
+    "prepublishOnly": "yarn run test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
